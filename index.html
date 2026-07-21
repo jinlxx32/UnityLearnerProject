@@ -3,16 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Project</title>
+    <title>My Projects | freshgrad.site</title>
     <link rel="stylesheet" href="styles.css">
-
+    <style>
+        .top-navbar {
+            background-color: #1e293b;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .top-navbar a {
+            color: #f8fafc;
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 20px;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        .top-navbar a:hover {
+            color: #38bdf8;
+        }
+        .top-navbar .brand {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #38bdf8;
+            margin-left: 0;
+        }
+        .nav-auth-btn {
+            background-color: #6366f1;
+            padding: 6px 14px;
+            border-radius: 6px;
+            color: white !important;
+        }
+        .nav-auth-btn:hover {
+            background-color: #4f46e5;
+        }
+    </style>
 </head>
 <body>
+
+    <!-- Header Navigation Bar -->
+    <nav class="top-navbar">
+        <a href="/" class="brand">freshgrad.site</a>
+        <div>
+            <a href="/">Home</a>
+            <a href="/auth/" class="nav-auth-btn">Log In / Sign Up</a>
+            <a href="/dashboard/">Dashboard</a>
+            <a href="/settings/">Settings</a>
+        </div>
+    </nav>
+
     <div class="content-wrapper">
         <h1>My Projects</h1>
         <p>A collection of my work.</p>
 
         <div class="projects-container">
+            
+            <!-- Supabase User Auth Subpage Card -->
+            <div class="project-card">
+                <div style="background: linear-gradient(135deg, #0f172a, #1e293b); height: 180px; display: flex; align-items: center; justify-content: center; color: #38bdf8; font-size: 3rem; font-weight: 800;">
+                    🔑 Auth
+                </div>
+                <div class="card-content">
+                    <h3>User Auth System (Supabase)</h3>
+                    <p>Full client-side user authentication system with instant Sign Up, Login form toggle state, and protected /dashboard & /settings routes.</p>
+                    <a href="/auth/" class="card-button">Access Portal</a>
+                </div>
+            </div>
+
+            <!-- AI Chat Interface -->
             <div class="project-card">
                 <img src="images/chat-app.png" alt="AI Chat App Screenshot">
                 <div class="card-content">
@@ -22,6 +83,7 @@
                 </div>
             </div>
 
+            <!-- Asteroid Survival -->
             <div class="project-card">
                 <img src="images/equilibrium-preview.png" alt="Game Jam Screenshot">
                 <div class="card-content">
@@ -31,6 +93,7 @@
                 </div>
             </div>
 
+            <!-- Collect 3 Star -->
             <div class="project-card">
                 <img src="images/3star-preview.png" alt="Collect 3 Star Screenshot">
                 <div class="card-content">
@@ -40,6 +103,7 @@
                 </div>
             </div>
 
+            <!-- YOLOv11 Card Tracker -->
             <div class="featured-project-card">
                 <div class="featured-image">
                     <img src="images/yolo11l_example.png" alt="Clash Royaled Deployment Tracker">

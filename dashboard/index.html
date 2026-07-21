@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard | freshgrad.site</title>
+    <link rel="stylesheet" href="../css/auth-common.css">
+    <!-- Supabase JS v2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase Client Helper -->
+    <script src="../js/supabase-client.js"></script>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="app-header">
+        <div class="nav-container">
+            <a href="/" class="brand-logo">
+                <span>freshgrad.site</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/dashboard/" class="active">Dashboard</a></li>
+                <li><a href="/settings/">Settings</a></li>
+                <li><button onclick="AuthService.signOut()" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;">Log Out</button></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Container -->
+    <main class="page-wrapper">
+        <div class="glass-card dashboard-card">
+            
+            <div class="dashboard-header">
+                <div>
+                    <h1>Welcome, <span id="user-display-name">User</span>!</h1>
+                    <p>Protected user account area & dashboard session overview.</p>
+                </div>
+                <div class="user-badge" id="session-status-badge">
+                    <span style="width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></span>
+                    Session Active
+                </div>
+            </div>
+
+            <!-- Profile & Account Details Grid -->
+            <div class="grid-cols-2">
+                <!-- Profile Summary Card -->
+                <div class="info-card">
+                    <h3>Account Information</h3>
+                    <div class="info-item">
+                        <span class="label">Email Address</span>
+                        <span class="value" id="user-email">--</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Full Name</span>
+                        <span class="value" id="user-name-field">--</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">User Unique ID</span>
+                        <span class="value" id="user-id" style="font-family: monospace; font-size: 0.82rem;">--</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Auth Provider</span>
+                        <span class="value" id="user-provider">Email / Password</span>
+                    </div>
+                </div>
+
+                <!-- Session Stats & Actions Card -->
+                <div class="info-card">
+                    <h3>Session Security</h3>
+                    <div class="info-item">
+                        <span class="label">Last Sign In</span>
+                        <span class="value" id="user-last-login">--</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Account Created</span>
+                        <span class="value" id="user-created-at">--</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Email Verified</span>
+                        <span class="value" id="user-verified-status" style="color: #6ee7b7;">Yes (Instant Session)</span>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem;">
+                        <a href="/settings/" class="btn-primary" style="text-decoration: none; font-size: 0.9rem; padding: 0.6rem 1rem;">
+                            Account Settings
+                        </a>
+                        <button onclick="AuthService.signOut()" class="btn-secondary" style="font-size: 0.9rem; padding: 0.6rem 1rem;">
+                            Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <p>&copy; 2026 freshgrad.site. All rights reserved.</p>
+    </footer>
+
+    <!-- Logic Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!window.AuthService) return;
+
+            // Enforce protected route access
+            const session = await AuthService.requireAuth();
+            if (!session || !session.user) return;
+
+            const user = session.user;
+            const meta = user.user_metadata || {};
+
+            // Populate User Details
+            const fullName = meta.full_name || user.email.split('@')[0];
+            document.getElementById('user-display-name').textContent = fullName;
+            document.getElementById('user-email').textContent = user.email;
+            document.getElementById('user-name-field').textContent = meta.full_name || 'Not specified';
+            document.getElementById('user-id').textContent = user.id;
+
+            // Format dates cleanly
+            if (user.last_sign_in_at) {
+                document.getElementById('user-last-login').textContent = new Date(user.last_sign_in_at).toLocaleString();
+            } else {
+                document.getElementById('user-last-login').textContent = 'Just now';
+            }
+
+            if (user.created_at) {
+                document.getElementById('user-created-at').textContent = new Date(user.created_at).toLocaleDateString();
+            }
+        });
+    </script>
+</body>
+</html>

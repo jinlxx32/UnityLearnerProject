@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings | freshgrad.site</title>
+    <link rel="stylesheet" href="../css/auth-common.css">
+    <!-- Supabase JS v2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase Client Helper -->
+    <script src="../js/supabase-client.js"></script>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="app-header">
+        <div class="nav-container">
+            <a href="/" class="brand-logo">
+                <span>freshgrad.site</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/dashboard/">Dashboard</a></li>
+                <li><a href="/settings/" class="active">Settings</a></li>
+                <li><button onclick="AuthService.signOut()" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.85rem;">Log Out</button></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Main Settings Container -->
+    <main class="page-wrapper">
+        <div class="glass-card dashboard-card">
+            
+            <div class="dashboard-header">
+                <div>
+                    <h1>Account Settings</h1>
+                    <p>Manage your profile metadata, display name, and password security.</p>
+                </div>
+            </div>
+
+            <!-- Global Alert Box -->
+            <div id="settings-alert" class="alert-box hidden">
+                <span id="settings-alert-msg"></span>
+            </div>
+
+            <div class="grid-cols-2">
+                
+                <!-- Profile Settings -->
+                <div class="info-card">
+                    <h3>Update Profile</h3>
+                    <form id="profile-form" onsubmit="handleProfileUpdate(event)">
+                        <div class="form-group">
+                            <label for="settings-fullname">Full Display Name</label>
+                            <input type="text" id="settings-fullname" class="form-control" placeholder="Enter your full name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="settings-email-readonly">Email Address (Read-Only)</label>
+                            <input type="email" id="settings-email-readonly" class="form-control" readonly style="opacity: 0.7; cursor: not-allowed;">
+                        </div>
+
+                        <button type="submit" class="btn-primary" id="btn-update-profile" style="margin-top: 1rem;">
+                            <span>Save Profile Changes</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Password & Security Settings -->
+                <div class="info-card">
+                    <h3>Change Password</h3>
+                    <form id="password-form" onsubmit="handlePasswordUpdate(event)">
+                        <div class="form-group">
+                            <label for="new-password">New Password</label>
+                            <input type="password" id="new-password" class="form-control" placeholder="Minimum 6 characters" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirm-password">Confirm New Password</label>
+                            <input type="password" id="confirm-password" class="form-control" placeholder="Re-enter new password" required>
+                        </div>
+
+                        <button type="submit" class="btn-primary" id="btn-update-pwd" style="margin-top: 1rem;">
+                            <span>Update Password</span>
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <p>&copy; 2026 freshgrad.site. All rights reserved.</p>
+    </footer>
+
+    <!-- Logic Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!window.AuthService) return;
+
+            // Enforce protected route access
+            const session = await AuthService.requireAuth();
+            if (!session || !session.user) return;
+
+            const user = session.user;
+            const meta = user.user_metadata || {};
+
+            document.getElementById('settings-fullname').value = meta.full_name || '';
+            document.getElementById('settings-email-readonly').value = user.email || '';
+        });
+
+        function showSettingsAlert(message, type = 'success') {
+            const box = document.getElementById('settings-alert');
+            const msg = document.getElementById('settings-alert-msg');
+            box.className = `alert-box ${type}`;
+            msg.textContent = message;
+        }
+
+        async function handleProfileUpdate(event) {
+            event.preventDefault();
+            const fullName = document.getElementById('settings-fullname').value;
+
+            const btn = document.getElementById('btn-update-profile');
+            btn.disabled = true;
+
+            const result = await AuthService.updateUserProfile({ full_name: fullName });
+            btn.disabled = false;
+
+            if (result.success) {
+                showSettingsAlert('Profile details updated successfully!', 'success');
+            } else {
+                showSettingsAlert(result.error || 'Failed to update profile.', 'error');
+            }
+        }
+
+        async function handlePasswordUpdate(event) {
+            event.preventDefault();
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (newPassword !== confirmPassword) {
+                showSettingsAlert('New passwords do not match.', 'error');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                showSettingsAlert('Password must be at least 6 characters.', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('btn-update-pwd');
+            btn.disabled = true;
+
+            const result = await AuthService.updateUserPassword(newPassword);
+            btn.disabled = false;
+
+            if (result.success) {
+                showSettingsAlert('Password updated successfully!', 'success');
+                document.getElementById('password-form').reset();
+            } else {
+                showSettingsAlert(result.error || 'Failed to update password.', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
