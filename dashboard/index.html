@@ -56,10 +56,6 @@
                         <span class="value" id="user-name-field">--</span>
                     </div>
                     <div class="info-item">
-                        <span class="label">User Unique ID</span>
-                        <span class="value" id="user-id" style="font-family: monospace; font-size: 0.82rem;">--</span>
-                    </div>
-                    <div class="info-item">
                         <span class="label">Auth Provider</span>
                         <span class="value" id="user-provider">Email / Password</span>
                     </div>
@@ -117,9 +113,8 @@
             document.getElementById('user-display-name').textContent = fullName;
             document.getElementById('user-email').textContent = user.email;
             document.getElementById('user-name-field').textContent = meta.full_name || 'Not specified';
-            document.getElementById('user-id').textContent = user.id;
 
-            // Format dates cleanly
+            // Format dates cleanly with time
             if (user.last_sign_in_at) {
                 document.getElementById('user-last-login').textContent = new Date(user.last_sign_in_at).toLocaleString();
             } else {
@@ -127,7 +122,7 @@
             }
 
             if (user.created_at) {
-                document.getElementById('user-created-at').textContent = new Date(user.created_at).toLocaleDateString();
+                document.getElementById('user-created-at').textContent = new Date(user.created_at).toLocaleString();
             }
         });
     </script>
